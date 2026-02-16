@@ -1,0 +1,25 @@
+name: "Ultimate Guitar Scraper"
+description: "Scrape chord tabs from Ultimate Guitar, convert to OnSong format, and send via webhooks"
+version: "1.0.0"
+slug: "ug-scraper"
+url: "https://github.com/ultimate-guitar-scrapper/ug-scraper"
+arch:
+  - aarch64
+  - amd64
+  - armv7
+startup: application
+boot: auto
+ingress: true
+ingress_port: 8080
+panel_icon: "mdi:music-note"
+panel_title: "Guitar Tabs"
+map:
+  - data:rw
+options:
+  flaresolverr_url: ""
+  webhook_url: ""
+  webhook_enabled: false
+schema:
+  flaresolverr_url: "url?"
+  webhook_url: "url?"
+  webhook_enabled: bool
