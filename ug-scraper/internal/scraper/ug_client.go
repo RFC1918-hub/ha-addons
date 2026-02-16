@@ -26,7 +26,7 @@ type UGClient struct {
 func NewUGClient() *UGClient {
 	return &UGClient{
 		deviceID:   generateDeviceID(),
-		httpClient: &http.Client{Timeout: 30 * time.Second},
+		httpClient: &http.Client{Timeout: 60 * time.Second},
 	}
 }
 

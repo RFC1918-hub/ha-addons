@@ -39,7 +39,7 @@ func NewSearchScraper() *SearchScraper {
 
 	return &SearchScraper{
 		httpClient: &http.Client{
-			Timeout: 30 * time.Second,
+			Timeout: 60 * time.Second, // Increased for FlareSolverr (42-44s response time)
 		},
 		ugClient:        NewUGClient(),
 		flareSolverrURL: flareSolverrURL,
@@ -54,7 +54,7 @@ type SearchOptions struct {
 }
 
 // SearchTabs searches Ultimate Guitar and returns tab results
-// First tries API search, falls back to HTML scraping if API fails
+// Uses HTML scraping (API endpoints return 404)
 func (s *SearchScraper) SearchTabs(opts SearchOptions) ([]SearchResult, error) {
 	if opts.Query == "" {
 		return nil, fmt.Errorf("search query cannot be empty")
@@ -62,18 +62,10 @@ func (s *SearchScraper) SearchTabs(opts SearchOptions) ([]SearchResult, error) {
 
 	fmt.Printf("🔍 Searching for: %q (type=%s, difficulty=%s)\n", opts.Query, opts.Type, opts.Difficulty)
 
-	// Try API search first
-	fmt.Println("📡 Attempting API search...")
-	results, err := s.searchViaAPI(opts)
-	if err == nil && len(results) > 0 {
-		fmt.Printf("✅ API search successful: %d results\n", len(results))
-		return filterTopResults(results), nil
-	}
-	fmt.Printf("⚠️  API search failed: %v\n", err)
-
-	// Fallback to HTML scraping if API fails
-	fmt.Println("🌐 Falling back to HTML scraping...")
-	results, err = s.searchViaHTML(opts)
+	// Skip API search - all endpoints return 404
+	// Go directly to HTML scraping
+	fmt.Println("🌐 Using HTML scraping (API endpoints unavailable)...")
+	results, err := s.searchViaHTML(opts)
 	if err != nil {
 		fmt.Printf("❌ HTML scraping failed: %v\n", err)
 		return nil, err
