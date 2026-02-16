@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/ultimate-guitar-scrapper/ug-scraper/internal/converter"
 	"github.com/ultimate-guitar-scrapper/ug-scraper/internal/scraper"
