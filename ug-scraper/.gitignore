@@ -22,8 +22,10 @@ frontend/.vite/
 data/
 *.json
 !package.json
+!package-lock.json
 !tsconfig.json
-!vite.config.ts
+!tsconfig.*.json
+!eslint.config.json
 
 # IDE
 .vscode/
