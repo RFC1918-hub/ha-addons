@@ -16,10 +16,9 @@ panel_title: "Guitar Tabs"
 map:
   - data:rw
 options:
-  flaresolverr_url: ""
   webhook_url: ""
   webhook_enabled: false
 schema:
-  flaresolverr_url: "url?"
-  webhook_url: "url?"
+  flaresolverr_url: str?
+  webhook_url: str?
   webhook_enabled: bool
