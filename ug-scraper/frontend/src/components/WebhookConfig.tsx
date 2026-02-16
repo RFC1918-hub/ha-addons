@@ -66,7 +66,9 @@ export default function WebhookConfig({ open, onClose, onSaved }: WebhookConfigP
 
     setLoading(true);
     try {
-      await saveWebhookConfig(url, enabled);
+      // Auto-enable webhook when saving
+      await saveWebhookConfig(url, true);
+      setEnabled(true);
       setSuccess('Webhook configuration saved successfully!');
       setTimeout(() => {
         onSaved();

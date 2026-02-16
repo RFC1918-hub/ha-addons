@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { TextField, InputAdornment, CircularProgress, Box } from '@mui/material';
+import { useState } from 'react';
+import { TextField, InputAdornment, CircularProgress, Box, IconButton } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
 
 interface SearchBarProps {
@@ -10,16 +10,17 @@ interface SearchBarProps {
 export default function SearchBar({ onSearch, loading }: SearchBarProps) {
   const [query, setQuery] = useState('');
 
-  // Debounce search
-  useEffect(() => {
-    if (!query.trim()) return;
-
-    const timer = setTimeout(() => {
+  const handleSearch = () => {
+    if (query.trim()) {
       onSearch(query);
-    }, 500);
+    }
+  };
 
-    return () => clearTimeout(timer);
-  }, [query, onSearch]);
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
 
   return (
     <Box sx={{ width: '100%', px: { xs: 2, sm: 3 }, py: { xs: 1.5, sm: 2 }, maxWidth: 700, mx: 'auto' }}>
@@ -29,6 +30,7 @@ export default function SearchBar({ onSearch, loading }: SearchBarProps) {
         placeholder="Search songs or artists..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
+        onKeyPress={handleKeyPress}
         size="medium"
         InputProps={{
           startAdornment: (
@@ -40,7 +42,18 @@ export default function SearchBar({ onSearch, loading }: SearchBarProps) {
             <InputAdornment position="end">
               <CircularProgress size={20} />
             </InputAdornment>
-          ) : null,
+          ) : (
+            <InputAdornment position="end">
+              <IconButton 
+                onClick={handleSearch} 
+                disabled={!query.trim() || loading}
+                edge="end"
+                sx={{ mr: -1 }}
+              >
+                <SearchIcon />
+              </IconButton>
+            </InputAdornment>
+          ),
         }}
         sx={{
           '& .MuiOutlinedInput-root': {
