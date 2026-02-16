@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -57,6 +58,8 @@ func (h *WebhookHandler) SaveConfig(c *fiber.Ctx) error {
 		})
 	}
 
+	fmt.Printf("\n🔗 Webhook Config: url=%s enabled=%v\n", req.URL, req.Enabled)
+
 	// Create config
 	webhookConfig := &config.WebhookConfig{
 		URL:     req.URL,
@@ -73,12 +76,14 @@ func (h *WebhookHandler) SaveConfig(c *fiber.Ctx) error {
 
 	// Save config
 	if err := h.configStore.Save(webhookConfig); err != nil {
+		fmt.Printf("❌ Failed to save webhook config: %v\n\n", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error":   "failed to save configuration",
 			"details": err.Error(),
 		})
 	}
 
+	fmt.Println("✅ Webhook configuration saved\n")
 	return c.JSON(fiber.Map{
 		"success": true,
 		"message": "webhook configuration saved",
@@ -132,6 +137,8 @@ func (h *WebhookHandler) SendTab(c *fiber.Ctx) error {
 		})
 	}
 
+	fmt.Printf("\n📤 Sending to webhook: %s - %s\n", req.Artist, req.Title)
+
 	// Check if webhook is configured
 	webhookURL := h.configStore.GetURL()
 	if webhookURL == "" {
@@ -154,6 +161,7 @@ func (h *WebhookHandler) SendTab(c *fiber.Ctx) error {
 	// Send with retry
 	deliveryResult, err := h.webhookClient.SendWithRetry(webhookURL, payload)
 	if err != nil {
+		fmt.Printf("❌ Webhook delivery failed: %v\n\n", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"success": false,
 			"error":   "webhook delivery failed",
@@ -162,6 +170,7 @@ func (h *WebhookHandler) SendTab(c *fiber.Ctx) error {
 		})
 	}
 
+	fmt.Printf("✅ Webhook delivered successfully (attempts=%d)\n\n", deliveryResult.Attempts)
 	return c.JSON(deliveryResult)
 }
 

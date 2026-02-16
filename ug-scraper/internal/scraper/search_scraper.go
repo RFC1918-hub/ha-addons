@@ -60,18 +60,26 @@ func (s *SearchScraper) SearchTabs(opts SearchOptions) ([]SearchResult, error) {
 		return nil, fmt.Errorf("search query cannot be empty")
 	}
 
+	fmt.Printf("🔍 Searching for: %q (type=%s, difficulty=%s)\n", opts.Query, opts.Type, opts.Difficulty)
+
 	// Try API search first
+	fmt.Println("📡 Attempting API search...")
 	results, err := s.searchViaAPI(opts)
 	if err == nil && len(results) > 0 {
+		fmt.Printf("✅ API search successful: %d results\n", len(results))
 		return filterTopResults(results), nil
 	}
+	fmt.Printf("⚠️  API search failed: %v\n", err)
 
 	// Fallback to HTML scraping if API fails
+	fmt.Println("🌐 Falling back to HTML scraping...")
 	results, err = s.searchViaHTML(opts)
 	if err != nil {
+		fmt.Printf("❌ HTML scraping failed: %v\n", err)
 		return nil, err
 	}
 
+	fmt.Printf("✅ HTML scraping successful: %d results\n", len(results))
 	return filterTopResults(results), nil
 }
 
@@ -84,16 +92,20 @@ func (s *SearchScraper) searchViaAPI(opts SearchOptions) ([]SearchResult, error)
 		fmt.Sprintf("%s?title=%s", ugAppSearchURL, url.QueryEscape(opts.Query)),
 	}
 
+	fmt.Printf("   Trying %d API endpoints...\n", len(endpoints))
 	var lastErr error
-	for _, apiURL := range endpoints {
+	for i, apiURL := range endpoints {
 		if opts.Type != "" {
 			apiURL += fmt.Sprintf("&type=%s", opts.Type)
 		}
 
+		fmt.Printf("   [%d/%d] %s\n", i+1, len(endpoints), apiURL)
 		results, err := s.trySearchEndpoint(apiURL)
 		if err == nil && len(results) > 0 {
+			fmt.Printf("   ✓ Endpoint returned %d results\n", len(results))
 			return results, nil
 		}
+		fmt.Printf("   ✗ Endpoint failed: %v\n", err)
 		lastErr = err
 	}
 
@@ -130,6 +142,7 @@ func (s *SearchScraper) trySearchEndpoint(apiURL string) ([]SearchResult, error)
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
+		fmt.Printf("      HTTP %d: %s\n", resp.StatusCode, string(body))
 		return nil, fmt.Errorf("API returned status %d: %s", resp.StatusCode, string(body))
 	}
 
@@ -156,14 +169,21 @@ func (s *SearchScraper) searchViaHTML(opts SearchOptions) ([]SearchResult, error
 		return nil, fmt.Errorf("building search URL: %w", err)
 	}
 
+	fmt.Printf("   URL: %s\n", searchURL)
 	var body []byte
 
 	// Try FlareSolverr first if configured
 	if s.flareSolverrURL != "" {
+		fmt.Printf("   Using FlareSolverr at %s\n", s.flareSolverrURL)
 		htmlContent, err := s.searchViaFlareSolverr(searchURL)
 		if err == nil {
+			fmt.Println("   ✓ FlareSolverr bypass successful")
 			body = []byte(htmlContent)
+		} else {
+			fmt.Printf("   ✗ FlareSolverr failed: %v\n", err)
 		}
+	} else {
+		fmt.Println("   FlareSolverr not configured, using direct request")
 	}
 
 	// Fallback to direct request if FlareSolverr not configured or failed
@@ -192,12 +212,16 @@ func (s *SearchScraper) searchViaHTML(opts SearchOptions) ([]SearchResult, error
 	// os.WriteFile("/tmp/ug_search.html", body, 0644)
 
 	// Try regex parsing first (old format)
+	fmt.Println("   Parsing HTML with regex...")
 	results, err := s.parseHTMLWithRegex(string(body))
 	if err == nil && len(results) > 0 {
+		fmt.Printf("   ✓ Regex parsing found %d results\n", len(results))
 		return results, nil
 	}
+	fmt.Printf("   ✗ Regex parsing failed: %v\n", err)
 
 	// Fallback to DOM parsing for React-rendered content
+	fmt.Println("   Trying DOM parsing...")
 	results, err = s.parseReactDOM(string(body))
 	if err != nil {
 		return nil, fmt.Errorf("parsing search results: %w", err)

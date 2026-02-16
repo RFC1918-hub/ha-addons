@@ -11,6 +11,15 @@ export FLARESOLVERR_URL
 export PORT=8080
 export CONFIG_FILE=/data/webhook-config.json
 
+bashio::log.info "Starting Ultimate Guitar Scraper..."
+bashio::log.info "Port: 8080"
+
+if [ -n "$FLARESOLVERR_URL" ]; then
+    bashio::log.info "FlareSolverr: ${FLARESOLVERR_URL}"
+else
+    bashio::log.warning "FlareSolverr: Not configured (Cloudflare bypass disabled)"
+fi
+
 # Pre-configure webhook if set in HA options
 if [ -n "$WEBHOOK_URL" ]; then
     mkdir -p /data
@@ -22,8 +31,8 @@ if [ -n "$WEBHOOK_URL" ]; then
   "updated_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 }
 EOF
-    bashio::log.info "Webhook configured: ${WEBHOOK_URL}"
+    bashio::log.info "Webhook configured: ${WEBHOOK_URL} (enabled=${WEBHOOK_ENABLED})"
 fi
 
-bashio::log.info "Starting Ultimate Guitar Scraper..."
+bashio::log.info "Starting server..."
 exec /server

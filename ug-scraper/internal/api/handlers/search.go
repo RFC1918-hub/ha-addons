@@ -33,6 +33,8 @@ func (h *SearchHandler) Handle(c *fiber.Ctx) error {
 	tabType := c.Query("type", "")
 	difficulty := c.Query("difficulty", "")
 
+	fmt.Printf("\n🎸 Search Request: q=%q type=%s difficulty=%s\n", query, tabType, difficulty)
+
 	opts := scraper.SearchOptions{
 		Query:      query,
 		Type:       tabType,
@@ -41,6 +43,7 @@ func (h *SearchHandler) Handle(c *fiber.Ctx) error {
 
 	results, err := h.searchScraper.SearchTabs(opts)
 	if err != nil {
+		fmt.Printf("❌ Search failed: %v\n", err)
 		// Return empty array instead of error (UG blocks automated search)
 		// Frontend can handle empty results gracefully
 		return c.JSON([]fiber.Map{})
@@ -62,5 +65,6 @@ func (h *SearchHandler) Handle(c *fiber.Ctx) error {
 		}
 	}
 
+	fmt.Printf("✅ Returning %d results\n\n", len(formattedResults))
 	return c.JSON(formattedResults)
 }
