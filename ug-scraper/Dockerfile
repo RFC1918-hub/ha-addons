@@ -2,10 +2,11 @@ ARG BUILD_FROM=ghcr.io/home-assistant/aarch64-base:3.20
 # Stage 1: Build frontend
 FROM node:20-alpine AS frontend-build
 
+WORKDIR /app
+COPY frontend/ /app/frontend/
 WORKDIR /app/frontend
-COPY frontend/package*.json ./
+RUN ls -la /app/frontend/
 RUN npm install
-COPY frontend/ ./
 RUN npx vite build
 
 # Stage 2: Build backend
