@@ -29,6 +29,6 @@ RUN apk add --no-cache bash
 
 COPY --from=backend-build /app/server /server
 COPY run.sh /run.sh
-RUN sed -i 's/\r$//' /run.sh && chmod +x /run.sh
+RUN sed -i 's/\r$//' /run.sh && chmod a+x /run.sh
 
-CMD ["/run.sh"]
+CMD [ "/run.sh" ]
