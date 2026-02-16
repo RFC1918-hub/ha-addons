@@ -43,7 +43,7 @@ func (h *TabHandler) Handle(c *fiber.Ctx) error {
 		})
 	}
 
-	fmt.Printf("✅ Tab fetched: %s - %s\n", tab.Artist, tab.SongName)
+	fmt.Printf("✅ Tab fetched: %s - %s\n", tab.ArtistName, tab.SongName)
 
 	// Validate tab
 	if err := h.converter.ValidateTab(tab); err != nil {
@@ -65,7 +65,7 @@ func (h *TabHandler) Handle(c *fiber.Ctx) error {
 		})
 	}
 
-	fmt.Printf("✅ Conversion complete: key=%s, capo=%d, %d lines\n\n", result.DetectedKey, tab.Capo, len(result.FormattedLines))
+	fmt.Printf("✅ Conversion complete: key=%s, capo=%d, %d chords\n\n", result.DetectedKey, tab.Capo, result.ChordCount)
 
 	// Return both raw and formatted content
 	return c.JSON(fiber.Map{
