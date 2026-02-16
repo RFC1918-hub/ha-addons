@@ -28,5 +28,7 @@ FROM ${BUILD_FROM}
 RUN apk add --no-cache bash
 
 COPY --from=backend-build /app/server /server
-COPY run.sh /etc/services.d/ug-scraper/run
-RUN chmod +x /etc/services.d/ug-scraper/run
+COPY run.sh /run.sh
+RUN sed -i 's/\r$//' /run.sh && chmod +x /run.sh
+
+CMD ["/run.sh"]

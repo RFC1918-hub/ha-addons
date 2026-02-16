@@ -1,6 +1,6 @@
 name: "Ultimate Guitar Scraper"
 description: "Scrape chord tabs from Ultimate Guitar, convert to OnSong format, and send via webhooks"
-version: "1.0.2"
+version: "1.0.3"
 slug: "ug-scraper"
 url: "https://github.com/ultimate-guitar-scrapper/ug-scraper"
 arch:
