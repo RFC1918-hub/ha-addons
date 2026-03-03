@@ -31,6 +31,7 @@ func SetupRoutes(app *fiber.App) {
 	onSongHandler := handlers.NewOnSongHandler(ugClient, onSongConverter)
 	webhookHandler := handlers.NewWebhookHandler(configStore, webhookClient)
 	formatHandler := handlers.NewFormatHandler(onSongConverter)
+	onsongCloudHandler := handlers.NewOnSongCloudHandler()
 
 	// API routes group
 	api := app.Group("/api")
@@ -54,4 +55,8 @@ func SetupRoutes(app *fiber.App) {
 	api.Delete("/webhook/config", webhookHandler.ClearConfig)
 	api.Post("/webhook/test", webhookHandler.TestWebhook)
 	api.Post("/webhook/send", webhookHandler.SendTab)
+
+	// OnSong Cloud endpoints
+	api.Get("/onsong-cloud/config", onsongCloudHandler.GetConfig)
+	api.Post("/onsong-cloud/send", onsongCloudHandler.Send)
 }

@@ -8,7 +8,7 @@ import SearchResults from './components/SearchResults';
 import PreviewPane from './components/PreviewPane';
 import ManualEntry from './components/ManualEntry';
 import WebhookConfig from './components/WebhookConfig';
-import { searchTabs, fetchTab, getWebhookConfig } from './services/api';
+import { searchTabs, fetchTab, getWebhookConfig, getOnSongCloudConfig } from './services/api';
 import type { SearchResult, Tab } from './services/api';
 
 function App() {
@@ -20,10 +20,12 @@ function App() {
   const [loadingTab, setLoadingTab] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [webhookConfigured, setWebhookConfigured] = useState(false);
+  const [onsongCloudConfigured, setOnsongCloudConfigured] = useState(false);
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
     checkWebhookConfig();
+    checkOnSongCloudConfig();
   }, []);
 
   const checkWebhookConfig = async () => {
@@ -32,6 +34,15 @@ function App() {
       setWebhookConfigured(config.configured && config.enabled === true);
     } catch (error) {
       console.error('Failed to check webhook config:', error);
+    }
+  };
+
+  const checkOnSongCloudConfig = async () => {
+    try {
+      const config = await getOnSongCloudConfig();
+      setOnsongCloudConfigured(config.configured);
+    } catch (error) {
+      console.error('Failed to check OnSong Cloud config:', error);
     }
   };
 
@@ -108,6 +119,7 @@ function App() {
                   tab={selectedTab}
                   loading={loadingTab}
                   webhookConfigured={webhookConfigured}
+                  onsongCloudConfigured={onsongCloudConfigured}
                   onBack={handleBack}
                   showBackButton
                 />
@@ -142,6 +154,7 @@ function App() {
                     tab={selectedTab}
                     loading={loadingTab}
                     webhookConfigured={webhookConfigured}
+                    onsongCloudConfigured={onsongCloudConfigured}
                   />
                 </Box>
               </Box>
@@ -152,7 +165,7 @@ function App() {
         {activeTab === 1 && (
           /* Manual entry tab */
           <Box sx={{ flexGrow: 1, overflow: 'auto', maxWidth: 800, mx: 'auto', width: '100%' }}>
-            <ManualEntry webhookConfigured={webhookConfigured} />
+            <ManualEntry webhookConfigured={webhookConfigured} onsongCloudConfigured={onsongCloudConfigured} />
           </Box>
         )}
 

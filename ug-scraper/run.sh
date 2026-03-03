@@ -5,11 +5,13 @@
 FLARESOLVERR_URL=$(bashio::config 'flaresolverr_url' '')
 WEBHOOK_URL=$(bashio::config 'webhook_url' '')
 WEBHOOK_ENABLED=$(bashio::config 'webhook_enabled' 'false')
+ONSONG_TOKEN=$(bashio::config 'onsong_token' '')
 
 # Export environment variables for the Go server
 export FLARESOLVERR_URL
 export PORT=8080
 export CONFIG_FILE=/data/webhook-config.json
+export ONSONG_TOKEN
 
 bashio::log.info "Starting Ultimate Guitar Scraper..."
 bashio::log.info "Port: 8080"

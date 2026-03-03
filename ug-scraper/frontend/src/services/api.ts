@@ -95,4 +95,24 @@ export const formatManualContent = async (title: string, artist: string, content
   return response.data.formatted;
 };
 
+export interface OnSongCloudConfig {
+  configured: boolean;
+}
+
+export const getOnSongCloudConfig = async (): Promise<OnSongCloudConfig> => {
+  const response = await api.get('/onsong-cloud/config');
+  return response.data;
+};
+
+export interface OnSongCloudSendPayload {
+  title: string;
+  artist: string;
+  content: string;
+}
+
+export const sendToOnSongCloud = async (payload: OnSongCloudSendPayload): Promise<{ success: boolean; filename: string }> => {
+  const response = await api.post('/onsong-cloud/send', payload);
+  return response.data;
+};
+
 export default api;

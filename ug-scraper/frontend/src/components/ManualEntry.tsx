@@ -16,19 +16,22 @@ import {
   ContentCopy as CopyIcon,
   Close as CloseIcon,
   Preview as PreviewIcon,
+  CloudUpload as CloudUploadIcon,
 } from '@mui/icons-material';
-import { sendToWebhook, formatManualContent } from '../services/api';
+import { sendToWebhook, sendToOnSongCloud, formatManualContent } from '../services/api';
 
 interface ManualEntryProps {
   webhookConfigured: boolean;
+  onsongCloudConfigured: boolean;
 }
 
-export default function ManualEntry({ webhookConfigured }: ManualEntryProps) {
+export default function ManualEntry({ webhookConfigured, onsongCloudConfigured }: ManualEntryProps) {
   const [title, setTitle] = useState('');
   const [artist, setArtist] = useState('');
   const [content, setContent] = useState('');
   const [formatted, setFormatted] = useState('');
   const [sending, setSending] = useState(false);
+  const [sendingCloud, setSendingCloud] = useState(false);
   const [formatting, setFormatting] = useState(false);
   const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({
     open: false,
@@ -82,6 +85,28 @@ export default function ManualEntry({ webhookConfigured }: ManualEntryProps) {
       });
     } finally {
       setSending(false);
+    }
+  };
+
+  const handleSendCloud = async () => {
+    if (!formatted) return;
+
+    setSendingCloud(true);
+    try {
+      const result = await sendToOnSongCloud({
+        title: title.trim(),
+        artist: artistOrPlaceholder,
+        content: formatted,
+      });
+      setSnackbar({ open: true, message: `Uploaded to OnSong Cloud: ${result.filename}`, severity: 'success' });
+    } catch (error: any) {
+      setSnackbar({
+        open: true,
+        message: error.response?.data?.error || 'Failed to upload to OnSong Cloud',
+        severity: 'error',
+      });
+    } finally {
+      setSendingCloud(false);
     }
   };
 
@@ -171,6 +196,17 @@ export default function ManualEntry({ webhookConfigured }: ManualEntryProps) {
                 sx={{ textTransform: 'none', flex: 1 }}
               >
                 {sending ? 'Sending...' : 'Send'}
+              </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                startIcon={<CloudUploadIcon />}
+                onClick={handleSendCloud}
+                disabled={!onsongCloudConfigured || sendingCloud}
+                size="small"
+                sx={{ textTransform: 'none', flex: 1 }}
+              >
+                {sendingCloud ? 'Uploading...' : 'OnSong Cloud'}
               </Button>
             </Stack>
           </Box>
