@@ -2,6 +2,18 @@
 
 All notable changes to this project are documented here.
 
+## [0.1.2] — 2026-03-21
+
+### Fixed
+
+- Updated `@fastify/static` from ^7.0.4 to ^8.0.4 to fix Fastify 5.x plugin version mismatch (`FST_ERR_PLUGIN_VERSION_MISMATCH`)
+
+## [0.1.1] — 2026-03-21
+
+### Fixed
+
+- Version bump to force HA image rebuild
+
 ## [0.1.0] — 2026-03-21
 
 ### Added
