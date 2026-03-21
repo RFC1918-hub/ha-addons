@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here.
 
+## [0.1.3] — 2026-03-21
+
+### Fixed
+
+- OnSong Cloud upload: replaced broken single-step POST (multipart form) with correct two-step PUT flow (create file entry → upload content to pre-signed S3 URL)
+- Added `Accept-Language` header to OnSong API calls to avoid server-side PHP error
+
 ## [0.1.2] — 2026-03-21
 
 ### Fixed
