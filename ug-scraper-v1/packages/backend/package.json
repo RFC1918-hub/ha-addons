@@ -1,0 +1,30 @@
+{
+  "name": "@chord-finder/backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "node --experimental-vm-modules ../../node_modules/jest-cli/bin/jest.js",
+    "test:coverage": "node --experimental-vm-modules ../../node_modules/jest-cli/bin/jest.js --coverage",
+    "lint": "eslint src tests",
+    "format": "prettier --write src tests"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.2.0",
+    "@fastify/static": "^7.0.4",
+    "fastify": "^5.0.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^20.14.0",
+    "jest": "^30.3.0",
+    "ts-jest": "^29.4.6",
+    "tsx": "^4.15.7",
+    "typescript": "^5.4.5"
+  }
+}
