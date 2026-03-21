@@ -1,6 +1,6 @@
 name: "Chord Finder"
 description: "Search Ultimate Guitar chord tabs and send to OnSong Cloud"
-version: "0.1.0"
+version: "0.1.1"
 slug: "chord-finder"
 init: false
 url: "https://github.com/pietern/chord-finder"
