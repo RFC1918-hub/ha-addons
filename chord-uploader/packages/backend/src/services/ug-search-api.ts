@@ -71,6 +71,10 @@ export async function searchTabs(
   const res = await fetch(url, { headers: androidHeaders() });
 
   if (!res.ok) {
+    if (res.status === 404) {
+      // No results found - return empty array
+      return [];
+    }
     const body = await res.text().catch(() => '');
     throw new Error(`UG search API returned ${res.status}: ${body.slice(0, 200)}`);
   }

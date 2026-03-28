@@ -1,6 +1,6 @@
 name: "Chord Uploader"
 description: "Search Ultimate Guitar chord tabs, support manual chord uploads, and send to OnSong Cloud"
-version: "0.1.3"
+version: "0.1.4"
 slug: "chord-uploader"
 init: false
 url: "https://github.com/pietern/chord-finder"
